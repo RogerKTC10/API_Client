@@ -1,9 +1,28 @@
 package com.example.APIClient;
 
-public class Utilisateur {
-     private String name, username, email, password, rappel;
-     private long id;
+import jakarta.persistence.Entity; 
+import jakarta.persistence.Id; 
+import jakarta.persistence.GeneratedValue; 
+import jakarta.persistence.GenerationType;
 
+@Entity 
+//L'idée c'est de pouvoir l'utiliser avec les mapping BASE DE DONNEES Plutart
+public class Utilisateur {
+
+     @Id
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+     private long id;
+     private String name;
+     private String username;
+     private String email;
+     private String password;
+     private String rappel;
+    
+
+     public Utilisateur(){
+
+     }
+     
     //Constructeur
     public Utilisateur(long id, String name, String username, String email, String password, String rappel){
         this.id = id;
