@@ -1,7 +1,8 @@
 package com.example.APIClient;
 
 import jakarta.persistence.Entity; 
-import jakarta.persistence.Id; 
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.GeneratedValue; 
 import jakarta.persistence.GenerationType;
 
@@ -12,11 +13,11 @@ public class Utilisateur {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private long id;
-     private String name;
-     private String username;
-     private String email;
-     private String password;
-     private String rappel;
+     private String name, username, email, password, rappel;
+     private boolean block;
+
+     @ManyToOne
+     private UserRolePrecis role;
     
 
      public Utilisateur(){
@@ -24,13 +25,10 @@ public class Utilisateur {
      }
      
     //Constructeur
-    public Utilisateur(long id, String name, String username, String email, String password, String rappel){
-        this.id = id;
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.rappel = rappel;
+    public Utilisateur(long id, String name, String username, String email, String password, String rappel, boolean block, UserRolePrecis role){
+        this.id = id; this.name = name; this.username = username;
+        this.email = email; this.password = password; this.rappel = rappel;
+        this.block = block; this.role = role;
        }
 
        //GETTEURS
@@ -40,6 +38,8 @@ public class Utilisateur {
         public String getEmail(){ return email; }
         public String getPassword(){return password; }
         public String getRappel(){ return rappel; }
+        public boolean getBlock(){ return block; }
+        public UserRolePrecis getRole(){ return role; }
 
        //SETTEURS
        public void setId(long id){ this.id = id; }
@@ -48,6 +48,8 @@ public class Utilisateur {
        public void setEmail(String email){ this.email = email; }
        public void setPassword(String password){ this.password = password; }
        public void setRappel(String rappel){ this.rappel = rappel; }
+       public void setBlock(boolean block){ this.block = block; }
+       public void setRole(UserRolePrecis role){ this.role = role; }
 
        @Override
        public String toString(){
@@ -57,6 +59,8 @@ public class Utilisateur {
                "Prenoms : "+this.username+"\n"+
                "Email : "+this.email+"\n"+
                "Mot de Passe : "+this.password+"\n"+
-               "Phrase de rappel : "+this.rappel+"\n";
+               "Phrase de rappel : "+this.rappel+"\n"+
+               "Bloqué : "+(this.block ? "OUI":"NON")+ "\n"+
+               "Role : "+(this.role != null ? this.role.getUserRole():"Aucun") +"\n";
        }
 }
