@@ -13,8 +13,15 @@ public class Securisation {
         http
            .csrf(csrf -> csrf.disable())
            .authorizeHttpRequests(auth -> auth
-               .anyRequest().permitAll());
+                .anyRequest().authenticated());
+
     return http.build();
     }
+
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+       return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
 
 }

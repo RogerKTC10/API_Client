@@ -1,5 +1,6 @@
 package com.example.Controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +29,14 @@ public class ControllersUilisateur{
         this.repositoryRole = repositoryRole;
     }
     //LISTER POUR LA LESTURE
+    @PreAuthorize("hasRole('ADMIN') or hasRole('Gestionnaire_Utilisateurs')")   
     @GetMapping("/utilisateurs")
     public String ListeAffiche(){
          return repository.findAll().toString();
     }
     //AJOUTER
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('Gestionnaire_Utilisateurs')")
     @PostMapping("/utilisateurs")
     public String AjoutUtilisateur(@RequestBody Utilisateur user) {
         if(user.getName() == null || user.getUsername() == null ||user.getEmail() == null || user.getPassword() == null || user.getRappel() == null){
@@ -46,6 +49,7 @@ public class ControllersUilisateur{
     }
     //SUPPRIMER
 
+    @PreAuthorize("hasRole('ADMIN') ")
     @DeleteMapping("/utilisateurs")
     public String SupprimerUtilisateur(@RequestParam long id) {
         if(!repository.existsById(id)){
@@ -56,22 +60,24 @@ public class ControllersUilisateur{
     }
     //MODIFIER
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('Gestionnaire_Utilisateurs')")
     @PutMapping("/utilisateurs/{id}")
-public String ModifierUtilisateur(@RequestBody Utilisateur u, @PathVariable long id){
-    if(!repository.existsById(id)){
-        return "Cet Utilisateur est introuvable... La modification ne peut se faire";
-    }
-    Utilisateur user = repository.findById(id).orElseThrow();
-    user.setName(u.getName());
-    user.setUsername(u.getUsername());
-    user.setEmail(u.getEmail());
-    user.setPassword(u.getPassword());
-    user.setRappel(u.getRappel());
+    public String ModifierUtilisateur(@RequestBody Utilisateur u, @PathVariable long id){
+        if(!repository.existsById(id)){
+           return "Cet Utilisateur est introuvable... La modification ne peut se faire";
+       }
+       Utilisateur user = repository.findById(id).orElseThrow();
+        user.setName(u.getName());
+        user.setUsername(u.getUsername());
+        user.setEmail(u.getEmail());
+        user.setPassword(u.getPassword());
+        user.setRappel(u.getRappel());
 
-    return repository.save(user).toString();
-    }
+        return repository.save(user).toString();
+      }
 
     //BLOQUER
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/utilisateurs/Block/{id}")
     public String BlockUtilisateur(@PathVariable long id){
         if(!repository.existsById(id)){
@@ -83,6 +89,7 @@ public String ModifierUtilisateur(@RequestBody Utilisateur u, @PathVariable long
     }
     //DEBLOQUER
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/utilisateurs/Unblock/{id}")
     public String DebloquerUtilisateur(@PathVariable long id){
         if(!repository.existsById(id)){
@@ -93,6 +100,8 @@ public String ModifierUtilisateur(@RequestBody Utilisateur u, @PathVariable long
         return repository.save(user).toString();
     }
     //ATTRIBUER UN ROLE
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('Gestionnaire_Utilisateurs')")
     @PutMapping("/utilisateurs/Role/{idUser}/{idRole}")
     public String AttribuerRole(@PathVariable long idUser, @PathVariable long idRole){
         Utilisateur user = repository.findById(idUser).orElse(null);
