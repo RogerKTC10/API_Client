@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.RepositoryLiaison.InterfaceRole;
 import com.RepositoryLiaison.InterfaceUtilisateur;
 import com.example.APIClient.Utilisateur;
+import com.example.APIClient.UserRolePrecis;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class ControllersUilisateur{
     private final InterfaceUtilisateur repository;
+    private final InterfaceRole repositoryRole;
 
-    public ControllersUilisateur(InterfaceUtilisateur repository){
+    public ControllersUilisateur(InterfaceUtilisateur repository,InterfaceRole repositoryRole){
         this.repository = repository;
+        this.repositoryRole = repositoryRole;
     }
     //LISTER POUR LA LESTURE
     @GetMapping("/utilisateurs")
@@ -35,6 +39,9 @@ public class ControllersUilisateur{
         if(user.getName() == null || user.getUsername() == null ||user.getEmail() == null || user.getPassword() == null || user.getRappel() == null){
                 return "Manques d'informations Importantes";
         } 
+        if(user.getRole() == null){
+            return "Preciser le Role avant d'ajouter cet Utilsateur";
+        }
         return repository.save(user).toString();
     }
     //SUPPRIMER
@@ -84,5 +91,21 @@ public String ModifierUtilisateur(@RequestBody Utilisateur u, @PathVariable long
         Utilisateur user = repository.findById(id).orElseThrow();
         user.setBlock(false);
         return repository.save(user).toString();
+    }
+    //ATTRIBUER UN ROLE
+    @PutMapping("/utilisateurs/Role/{idUser}/{idRole}")
+    public String AttribuerRole(@PathVariable long idUser, @PathVariable long idRole){
+        Utilisateur user = repository.findById(idUser).orElse(null);
+        if(user == null){
+            return "Cet Utilisateur est introuvable... L'attribution de role ne peut se faire";
+        }
+        UserRolePrecis role = repositoryRole.findById(idRole).orElse(null);
+        if(role == null){
+            return "Ce Role est introuvable... L'attribution de role ne peut se faire";
+        }
+        user.setRole(role);
+
+        repository.save(user);
+        return "Role attribué avec succès";
     }
 }
