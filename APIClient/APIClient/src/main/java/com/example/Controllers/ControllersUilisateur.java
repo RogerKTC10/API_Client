@@ -9,6 +9,7 @@ import com.RepositoryLiaison.InterfaceRole;
 import com.RepositoryLiaison.InterfaceUtilisateur;
 import com.example.APIClient.Utilisateur;
 import com.example.APIClient.UserRolePrecis;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ControllersUilisateur{
     private final InterfaceUtilisateur repository;
     private final InterfaceRole repositoryRole;
+    private final PasswordEncoder passwordEncoder;
 
-    public ControllersUilisateur(InterfaceUtilisateur repository,InterfaceRole repositoryRole){
+    public ControllersUilisateur(InterfaceUtilisateur repository,InterfaceRole repositoryRole, PasswordEncoder passwordEncoder){
         this.repository = repository;
         this.repositoryRole = repositoryRole;
+        this.passwordEncoder = passwordEncoder;
     }
     //LISTER POUR LA LESTURE
     @PreAuthorize("hasRole('ADMIN') or hasRole('Gestionnaire_Utilisateurs')")   
@@ -45,6 +48,7 @@ public class ControllersUilisateur{
         if(user.getRole() == null){
             return "Preciser le Role avant d'ajouter cet Utilsateur";
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user).toString();
     }
     //SUPPRIMER
@@ -70,9 +74,9 @@ public class ControllersUilisateur{
         user.setName(u.getName());
         user.setUsername(u.getUsername());
         user.setEmail(u.getEmail());
-        user.setPassword(u.getPassword());
+        user.setPassword(passwordEncoder.encode(u.getPassword()));
         user.setRappel(u.getRappel());
-
+        
         return repository.save(user).toString();
       }
 

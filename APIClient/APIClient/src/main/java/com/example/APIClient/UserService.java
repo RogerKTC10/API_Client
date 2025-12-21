@@ -13,9 +13,9 @@ public class UserService implements UserDetailsService {
     
     private InterfaceUtilisateur repository;
 
-    /*public UserService(InterfaceUtilisateur repository) {
+    public UserService(InterfaceUtilisateur repository) {
         this.repository = repository;
-    }*/
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
