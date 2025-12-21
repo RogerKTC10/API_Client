@@ -2,8 +2,6 @@ package com.example.APIClient;
 
 
 import com.RepositoryLiaison.InterfaceUtilisateur;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired(required = false)
+    
     private InterfaceUtilisateur repository;
 
     /*public UserService(InterfaceUtilisateur repository) {
